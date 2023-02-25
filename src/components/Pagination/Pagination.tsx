@@ -1,18 +1,20 @@
-import React from 'react';
-import { Button, Flex, Icon, Text } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
+import { Button, Flex, Icon, Skeleton, Text } from '@chakra-ui/react';
 import { RiArrowLeftSLine, RiArrowRightSLine } from 'react-icons/ri';
 import { paginationLength } from './constants';
 
 export type PaginationProps = {
+  isLoading?: boolean;
   total: number;
   currentPage: number;
   totalPages: number;
   setPage: (page: number) => void;
 }
 
-const Pagination: React.FC<PaginationProps> = ({ total, currentPage, setPage, totalPages }) => {
+const Pagination: React.FC<PaginationProps> = ({ total, currentPage, setPage, totalPages, isLoading = false }) => {
+  const [arrayPages, setArrayPages] = useState<number[]>([1, 2, 3, 4, 5]);
   const pagesArray = () => {
-    const array = [];
+    let array = [];
     const length = totalPages < paginationLength ? totalPages : paginationLength;
     for (let i = 0; i < length; i++) {
       let value = i + currentPage - Math.floor(length / 2);
@@ -27,6 +29,12 @@ const Pagination: React.FC<PaginationProps> = ({ total, currentPage, setPage, to
     }
     return array;
   };
+
+  useEffect(() => {
+    if (!isLoading) {
+      setArrayPages(pagesArray());
+    }
+  }, [currentPage, totalPages]);
 
 
   const handlePrevious = () => {
@@ -44,27 +52,30 @@ const Pagination: React.FC<PaginationProps> = ({ total, currentPage, setPage, to
       <Button size={"sm"} onClick={handlePrevious} disabled={currentPage === 1}>
         <Icon as={RiArrowLeftSLine} />
       </Button>
-      {pagesArray().map((page) => (
-        <Text
-          key={page}
-          cursor={"pointer"}
-          onClick={() => setPage(page)}
-          px={["0px", "3px"]}
-          color={page === currentPage ? "marvel.red" : "white"}
-          textDecoration={page === currentPage ? "underline" : "none"}
-          fontWeight={page === currentPage ? "bold" : "normal"}
-          fontSize={["sm", "md"]}
-        >
-          {page}
-        </Text>
+      {arrayPages.map((page) => (
+        <Skeleton isLoaded={!isLoading} key={page}>
+          <Text
+            key={page}
+            cursor={"pointer"}
+            onClick={() => setPage(page)}
+            px={["0px", "3px"]}
+            color={page === currentPage ? "marvel.red" : "white"}
+            textDecoration={page === currentPage ? "underline" : "none"}
+            fontWeight={page === currentPage ? "bold" : "normal"}
+            fontSize={["sm", "md"]}
+          >
+            {page}
+          </Text>
+        </Skeleton>
       ))}
       <Button size={"sm"} onClick={handleNext} disabled={currentPage === total}>
         <Icon as={RiArrowRightSLine} />
       </Button>
-
-      <Text color={"white"} fontSize={["sm", "md"]} onClick={() => setPage(totalPages)} cursor={"pointer"}>
-        de {totalPages}
-      </Text>
+      <Skeleton isLoaded={!isLoading} >
+        <Text color={"white"} fontSize={["sm", "md"]} onClick={() => setPage(totalPages)} cursor={"pointer"}>
+          de {totalPages}
+        </Text>
+      </Skeleton>
 
     </Flex>
   );

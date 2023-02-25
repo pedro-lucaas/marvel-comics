@@ -20,7 +20,7 @@ const Comics: React.FC = () => {
   const queryClient = useQueryClient()
 
   const { data: comics, isLoading } = useQuery([COMICS_QUERY_KEY, { titleStartsWith, page, orderBy }], () => listComics({ titleStartsWith, page, orderBy }), {
-    onSuccess: (comics) => {
+    onSuccess: () => {
       queryClient.prefetchQuery([COMICS_QUERY_KEY, { titleStartsWith, page: page + 1, orderBy }], () => listComics({ titleStartsWith, page: page + 1, orderBy }))
       queryClient.prefetchQuery([COMICS_QUERY_KEY, { titleStartsWith, page: page + 2, orderBy }], () => listComics({ titleStartsWith, page: page + 2, orderBy }))
     }
@@ -32,17 +32,17 @@ const Comics: React.FC = () => {
     }
   }, [comics])
 
-  return <Flex direction={"column"} overflowY={"scroll"}>
+  return <Flex direction={"column"}>
     <Flex>
       <Menu />
       <Search setValue={setTitleStartsWith} />
     </Flex>
     <Ordination ordination={orderBy} onSetOrdination={setOrderBy} />
-    <Pagination total={comics?.data.total || 0} currentPage={page} setPage={setPage} totalPages={totalPages} />
+    <Pagination isLoading={isLoading} total={comics?.data.total || 0} currentPage={page} setPage={setPage} totalPages={totalPages} />
     <CardContainer title={"Comics"}>
       <CardsList isLoaded={!isLoading} comics={comics?.data.results} />
     </CardContainer>
-    <Pagination total={comics?.data.total || 0} currentPage={page} setPage={setPage} totalPages={totalPages} />
+    <Pagination isLoading={isLoading} total={comics?.data.total || 0} currentPage={page} setPage={setPage} totalPages={totalPages} />
   </Flex>;
 }
 

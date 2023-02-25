@@ -19,18 +19,17 @@ const Watchlist: React.FC = () => {
 
   const data = getWatchlist(orderBy, titleStartsWith, page);
 
-  return <Flex direction={"column"} overflowY={"scroll"}>
+  return <Flex direction={"column"}>
     <Flex>
       <Menu />
       <Search setValue={setTitleStartsWith} />
     </Flex>
-    <Flex direction={"column"}>
-      <Ordination ordination={orderBy} onSetOrdination={setOrderBy} />
-      <Pagination total={data.total} currentPage={page} setPage={setPage} totalPages={Math.ceil(data.total / data.limit)} />
-    </Flex>
+    <Ordination ordination={orderBy} onSetOrdination={setOrderBy} />
+    <Pagination total={data.total} currentPage={page} setPage={setPage} totalPages={Math.ceil(data.total / data.limit)} />
     <CardContainer title={"Watchlist"}>
       <CardsList isLoaded={true} comics={data.results} />
     </CardContainer>
+    <Pagination total={data.total} currentPage={page} setPage={setPage} totalPages={Math.ceil(data.total / data.limit)} />
   </Flex>;
 }
 
